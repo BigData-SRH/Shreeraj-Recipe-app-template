@@ -31,7 +31,7 @@ The project includes:
 - A complete environment setup guide (steps below)
 - A `requirements.txt` file for reproducible installs
 
-Click here to see the Streamlit Dashboard for this project: [Streamlit Dashboard]({https://shreeraj-recipe-app.streamlit.app/})
+Click here to see the Streamlit Dashboard for this project: https://shreeraj-recipe-app.streamlit.app/
 
 ---
 
