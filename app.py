@@ -10,14 +10,14 @@ st.set_page_config(layout="wide", page_title="Chef's Compass")
 # -------------------------------------------------
 # Load Data Configuration
 # -------------------------------------------------
-# CORRECTED: Using a relative path that works locally and on deployment
+# IMPORTANT: Update this path to where your CSV file is located.
 DATA_PATH = 'data/deduplicated_recipes_with_complexity.csv'
 
 # Dashboard Name and Tagline
 DASHBOARD_NAME = "👨‍🍳 Chef's Compass"
 TAGLINE = "Navigate your ingredients, discover your next favorite recipe."
 
-# Placeholders for About Us section (Used by pages/02_About Us.py)
+# Placeholders for About Us section
 USER_GMAIL = "shreerajpatil98@gmail.mail.com"
 USER_LINKEDIN_URL = "https://www.linkedin.com/in/shreeraj-patil-142011136?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
 DATASET_LINK = "https://www.kaggle.com/datasets/prashantsingh001/recipes-dataset-64k-dishes" 
@@ -128,7 +128,7 @@ CUSTOM_CSS = """
 </style>
 """
 
-# --- Utility Functions ---
+# --- Utility Functions (All utility functions remain unchanged) ---
 
 def render_html_component_box(html_content, key):
     """Utility to reliably render complex HTML components using st.empty."""
@@ -243,6 +243,22 @@ def remove_from_favorites(recipe_title):
     ]
     st.success(f"Removed **{recipe_title}** from favorites.")
 
+def generate_qr_code_html(data_to_encode, label, qr_color='000000'): 
+    """Generates and displays a colorful QR code (scannable)."""
+    qr_code_url = f"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={data_to_encode}&color={qr_color}"
+    
+    html_content = f"""
+    <div style="text-align: center; margin-bottom: 20px; border: 1px solid #ccc; padding: 15px; border-radius: 8px; background-color: white;">
+        <p style="font-size: large; font-weight: bold; margin-bottom: 10px; color: #5D5D81;">{label}</p>
+        <p style="font-size: small; color: #333; margin-bottom: 10px;">Scan Code:</p>
+        <img src="{qr_code_url}" alt="QR code for {label}" style="width:150px; height:150px; display: block; margin: auto;">
+    </div>
+    """
+    st.markdown(html_content, unsafe_allow_html=True)
+
+
+# --- Page Functions ---
+
 def render_recipe_count_box(num_recipes):
     """Renders the custom HTML box for the recipe count."""
     html_content = f"""
@@ -253,43 +269,11 @@ def render_recipe_count_box(num_recipes):
     """
     render_html_component_box(html_content, key='recipe_count_placeholder')
 
-def apply_filter_action(should_scroll=True):
-    """
-    Handler for the 'Apply Filters' button click.
-    Calculates results and optionally scrolls the page.
-    """
-    selected_cat = st.session_state.selected_category_selectbox
-    selected_ing = st.session_state.selected_ingredients_dropdown
-    keywords = "" 
-    threshold = st.session_state.threshold_slider
-    
-    st.session_state.filtered_results = filter_recipes(
-        st.session_state.data, 
-        selected_ing, 
-        keywords, 
-        threshold,
-        selected_cat
-    )
-
-    if should_scroll:
-        st.success("Filters applied! Results updated.")
-        # Inject JavaScript to smoothly scroll
-        scroll_script = """
-            <script>
-                var element = document.getElementById('detailed_list_anchor');
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            </script>
-        """
-        st.markdown(scroll_script, unsafe_allow_html=True)
-
-# --- Page Functions (Recipe Explorer and Favorites are kept here as requested) ---
 
 def page_recipe_explorer(df):
     """Handles the filtering and results display for recipes."""
     
-    st.title("Recipe Explorer 🔍")
+    # --- HEADER REMOVED: st.header("Recipe Explorer 🔍")
     
     # --- Sidebar Filtering Logic ---
     st.sidebar.markdown("## Ingredient Filters")
@@ -436,6 +420,51 @@ def page_recipe_explorer(df):
     st.markdown('</div>', unsafe_allow_html=True)
 
 
+def page_overview(df):
+    """Displays an overview of the dataset and allows full data download."""
+    st.header("Recipe Dataset Overview 📚")
+    st.markdown("---")
+    st.markdown("""
+        This dashboard provides an interactive way to explore and filter a large dataset of recipes.
+        You can search for recipes based on the ingredients you have and save your favorites!
+    """)
+    st.subheader("Dataset Summary")
+    
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Total Recipes", f"{len(df):,}")
+    col2.metric("Total Ingredients", f"{len(st.session_state.all_ingredients):,}")
+    col3.metric("Average Steps", f"{df['num_steps'].mean():.1f}")
+    
+    st.subheader("Data Columns Preview")
+    
+    preview_cols = ['recipe_title', 'category', 'num_ingredients', 'num_steps', 'Complexity', 'cleaned_ingredients_filtered']
+    df_preview = df[preview_cols].head() 
+
+    st.dataframe(df_preview, use_container_width=True)
+    
+    csv_full = convert_df_to_csv(df)
+
+    st.download_button(
+        label="Download Full Recipe Dataset (CSV)",
+        data=csv_full,
+        file_name='64k_dishes_full_dataset.csv',
+        mime='text/csv',
+        type="primary"
+    )
+
+    with st.expander("Detailed Data Information"):
+        st.write(f"The dataset contains **{len(df)}** recipes across **{df['category'].nunique()}** categories.")
+        st.write("Key columns used for the dashboard:")
+        st.markdown("""
+        * **Recipe Title**: The name of the recipe.
+        * **Cleaned Ingredients Filtered**: A cleaned, comma-separated list of ingredients, used for filtering.
+        * **Directions**: The steps to make the recipe.
+        * **Num Steps**: The total number of steps in the recipe, used to calculate **Complexity**.
+        * **Complexity**: Categorized as Simple ($\le$ Q1 steps), Medium ($\le$ Q3 steps), or Complex ($>$ Q3 steps).
+        """)
+    st.markdown("---")
+
+
 def page_favorites():
     """Displays the list of favorite recipes."""
     st.header("My Favorite Recipes ❤️")
@@ -483,6 +512,114 @@ def page_favorites():
     st.markdown("---")
 
 
+def page_about_us():
+    """Displays the About Us page content."""
+    st.header("About Us ℹ️")
+    st.markdown("---")
+    
+    st.subheader("Dashboard Details")
+    # NOTE: The f-string is used here. LaTeX curly braces must be escaped with double braces {{}}
+    st.markdown(f"""
+        **{DASHBOARD_NAME}** is an interactive recipe finder built on Streamlit. 
+        It helps you discover recipes based on ingredients you have, applying a flexible match threshold. 
+        Recipes are conveniently sorted from **Simple** to **Complex** for ease of use.
+        
+        ---
+        
+        **Raw Dataset Source**
+        
+        [Recipes Dataset : 64k Dishes]({DATASET_LINK})
+        
+        ---
+        
+        **Target Users and Core Objective** 🎯
+        
+        * **Key Users:** The **Home Cook** & the **Meal Planner**, who are busy professionals needing to maximize the use of existing ingredients to save on grocery bills.
+        * **Core Goal:** Instant recipe rankings that **maximize existing ingredients** and **minimize guesswork**.
+        
+        **Key Performance Indicators (KPIs)** 📊
+        
+        The dashboard uses these metrics to provide actionable insights:
+        
+        1.  **Ingredient Match Score:** A normalized score showing the percentage of a recipe's required ingredients that the user currently has.
+            
+            Match Score= # of ingredients matched/num_ingredients in recipe X 100
+            
+            *Purpose:* Ranks recipes so users see the best possible dishes first.
+        
+        2.  **Number of Possible Recipes:** The count of all recipes that can be made with the given ingredients (either full match or partial match above a set threshold).
+            
+            *Purpose:* Shows the user how many options they have based on what’s available in their kitchen.
+        
+        3.  **Average Recipe Complexity:** Measures how complex the suggested recipes are, derived from dataset fields.
+            
+            Complexity = (num_ingredients + num_steps)/2
+            
+            *Purpose:* Lets the user filter for quick & simple vs. detailed & involved dishes.
+        
+        **Future Engineering & Data Preparation** 🛠️
+        
+        * **Ingredient Cleaning:** We performed vigorous cleaning on the ingredients column to create a separate, normalized list of ingredients for accurate matching.
+        * **Ingredient Clustering:** Different types of ingredients (e.g., 'green onion', 'scallion', 'onion powder') have been **clustered** into a single category (e.g., 'onion') for simple, effective matching. This removes friction for the user.
+        * **Duplicate Removal:** Duplicated recipes were removed from the dataset to ensure an effortless user experience.
+        
+        **How to use the Dashboard** 💡
+        
+        * **Recipe Explorer Tab:**
+            * **Filter by Category:** Filter options like "Desserts," "Indian," "Fruit salads," etc.
+            * **Select Ingredients:** User inputs the names of the ingredients they currently have.
+            * **Ingredients Match Threshold (%):** Used to see either a full match or partial match. Setting this to **100%** shows only recipes where *all* required ingredients match the user's input.
+        * **Favorites Page:** User can add and manage their favorite recipes by clicking on the **"Add to favorites"** button on the Recipe Explorer page.
+        
+        ---
+        
+        **Contact & Connect**
+        
+        Scan the colorful QR codes below to retrieve the contact details.
+    """)
+
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        generate_qr_code_html(USER_GMAIL, "Gmail ID", qr_color='EA4335')
+
+    with col2:
+        generate_qr_code_html(USER_LINKEDIN_URL, "LinkedIn ID", qr_color='0A66C2')
+    st.markdown("---")
+
+
+def apply_filter_action(should_scroll=True):
+    """
+    Handler for the 'Apply Filters' button click.
+    Calculates results and optionally scrolls the page.
+    """
+    selected_cat = st.session_state.selected_category_selectbox
+    selected_ing = st.session_state.selected_ingredients_dropdown
+    keywords = "" 
+    threshold = st.session_state.threshold_slider
+    
+    st.session_state.filtered_results = filter_recipes(
+        st.session_state.data, 
+        selected_ing, 
+        keywords, 
+        threshold,
+        selected_cat
+    )
+
+    if should_scroll:
+        st.success("Filters applied! Results updated.")
+        # Inject JavaScript to smoothly scroll
+        scroll_script = """
+            <script>
+                var element = document.getElementById('detailed_list_anchor');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            </script>
+        """
+        st.markdown(scroll_script, unsafe_allow_html=True)
+
+
 # --- Main App Execution ---
 
 if __name__ == '__main__':
@@ -497,8 +634,7 @@ if __name__ == '__main__':
         st.session_state.all_ingredients = all_ingredients
         st.session_state.all_categories = all_categories
     except Exception:
-        # Note: If this error occurs, ensure the 'data' folder and CSV are in your GitHub repo.
-        st.error(f"Error initializing data. Please check the data file: `{DATA_PATH}`. Ensure it is in a 'data' subfolder.")
+        st.error(f"Error initializing data. Please check the data file: `{DATA_PATH}`.")
         st.stop()
     
     # 3. Initialize session state
@@ -508,7 +644,10 @@ if __name__ == '__main__':
         if ing in st.session_state.all_ingredients
     ]
 
-    # Initialize all necessary session state variables
+    # FIX: Initialize 'page' first to prevent AttributeError in st.sidebar.radio
+    if 'page' not in st.session_state:
+        st.session_state.page = 'Recipe Explorer' 
+        
     if 'favorites' not in st.session_state:
         st.session_state.favorites = []
     
@@ -520,29 +659,34 @@ if __name__ == '__main__':
 
     if 'threshold_slider' not in st.session_state:
         st.session_state.threshold_slider = 50
-
-    if 'app_page_select' not in st.session_state:
-        st.session_state['app_page_select'] = 'Recipe Explorer'
     
     # 4. Calculate initial results on first load
     if 'filtered_results' not in st.session_state:
         apply_filter_action(should_scroll=False)
 
-    # --- Sidebar Navigation for Pages within app.py ---
+    # --- Sidebar Navigation ---
     st.sidebar.title(DASHBOARD_NAME)
     st.sidebar.markdown(f"**_{TAGLINE}_**")
     
-    # Allows switching between Recipe Explorer and Favorites in the sidebar
-    # The other pages (01_ and 02_) are handled automatically by Streamlit
+    page_options = ('Recipe Explorer', 'Favorites', 'Dataset Overview', 'About Us')
+    
     page_selection = st.sidebar.radio(
-        "**Main Navigation**",
-        ('Recipe Explorer', 'Favorites'),
-        key='app_page_select'
+        "**Navigation**",
+        page_options,
+        index=page_options.index(st.session_state.page) if st.session_state.page in page_options else 0,
+        key='page_radio_select'
     )
     
-    # --- Page Router for Pages within app.py ---
-    if page_selection == 'Favorites':
-        page_favorites()
-    else:
-        # Default to Recipe Explorer
+    if st.session_state.page != page_selection:
+        st.session_state.page = page_selection
+        st.rerun() 
+
+    # --- Page Router ---
+    if st.session_state.page == 'Dataset Overview':
+        page_overview(data)
+    elif st.session_state.page == 'Recipe Explorer':
         page_recipe_explorer(data)
+    elif st.session_state.page == 'Favorites':
+        page_favorites()
+    elif st.session_state.page == 'About Us':
+        page_about_us()
