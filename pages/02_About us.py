@@ -80,6 +80,14 @@ def page_about_us():
             Complexity = (num_ingredients + num_steps)/2
             
             *Purpose:* Lets the user filter for quick & simple vs. detailed & involved dishes.
+
+            Defination for the complexity levels:
+
+            A recipe with 1 to 4 steps would be labeled Simple.
+
+            A recipe with 5 to 8 steps would be labeled Medium.
+
+            A recipe with 9 or more steps would be labeled Complex.
         
         **Future Engineering & Data Preparation** 🛠️
         
