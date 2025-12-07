@@ -87,13 +87,18 @@ def page_about_us():
         * **Ingredient Clustering:** Different types of ingredients (e.g., 'green onion', 'scallion', 'onion powder') have been **clustered** into a single category (e.g., 'onion') for simple, effective matching. This removes friction for the user.
         * **Duplicate Removal:** Duplicated recipes were removed from the dataset to ensure an effortless user experience.
         
-        **How to use the Dashboard** 💡
+        ---
+
+        ### 💡 Disclaimer & User Experience Notes
         
-        * **Recipe Explorer Tab:**
-            * **Filter by Category:** Filter options like "Desserts," "Indian," "Fruit salads," etc.
-            * **Select Ingredients:** User inputs the names of the ingredients they currently have.
-            * **Ingredients Match Threshold (%):** Used to see either a full match or partial match. Setting this to **100%** shows only recipes where *all* required ingredients match the user's input.
-        * **Favorites Page:** User can add and manage their favorite recipes by clicking on the **"Add to favorites"** button on the Recipe Explorer page.
+        **A few things to note about navigating the results:**
+        
+        * **Volume Warning:** The recipe dataset is massive (around **25,000 recipes**). If you enter a broad list of common ingredients, you might receive a large number of results, sometimes **over 1,000**!
+        * **Table Scrolling:** We've added a **scroll bar** to the **"Recipe Complexity Breakdown"** table to manage the long list of suggestions.
+        * **Viewing Details (Temporary Fix):** To see the full recipe in the **"Detailed Recipe List"** section, you currently need to **scroll down a little on the main page** after making your selection.
+        * **Future Enhancement:** We acknowledge this is a bit annoying! We are actively working on an improvement so that clicking the **Recipe Title** in the breakdown table will automatically take you to the detailed view.
+        
+        We hope you enjoy your delicious meal! 🍽️
         
         ---
         
@@ -121,4 +126,3 @@ def page_about_us():
 # Execution for the multi-page app
 if __name__ == '__main__':
     page_about_us()
-
