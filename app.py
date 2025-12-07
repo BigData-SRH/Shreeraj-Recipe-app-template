@@ -289,7 +289,7 @@ def apply_filter_action(should_scroll=True):
 def page_recipe_explorer(df):
     """Handles the filtering and results display for recipes."""
     
-    st.title("Recipe Explorer 🔍")
+    # st.title("Recipe Explorer 🔍") # Removed as requested by the user
     
     # --- Sidebar Filtering Logic ---
     st.sidebar.markdown("## Ingredient Filters")
