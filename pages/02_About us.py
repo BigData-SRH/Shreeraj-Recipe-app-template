@@ -20,6 +20,7 @@ DASHBOARD_NAME = "👨‍🍳 Chef's Compass"
 USER_GMAIL = "shreerajpatil98@gmail.mail.com"
 USER_LINKEDIN_URL = "https://www.linkedin.com/in/shreeraj-patil-142011136?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
 DATASET_LINK = "https://www.kaggle.com/datasets/prashantsingh001/recipes-dataset-64k-dishes" 
+GITHUB_REPO_URL = "https://github.com/Shreeraj98"
 
 def generate_qr_code_html(data_to_encode, label, qr_color='000000'): 
     """Generates and displays a colorful QR code (scannable)."""
@@ -93,6 +94,14 @@ def page_about_us():
             * **Select Ingredients:** User inputs the names of the ingredients they currently have.
             * **Ingredients Match Threshold (%):** Used to see either a full match or partial match. Setting this to **100%** shows only recipes where *all* required ingredients match the user's input.
         * **Favorites Page:** User can add and manage their favorite recipes by clicking on the **"Add to favorites"** button on the Recipe Explorer page.
+        
+        ---
+
+        ---
+        
+        **GitHub Repository** 🔗
+        
+        Find the code for this project here: [GitHub Repository]({GITHUB_REPO_URL})
         
         ---
         
