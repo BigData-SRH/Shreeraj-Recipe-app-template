@@ -1,13 +1,32 @@
-# Streamlit App Template
+# 👨‍🍳 Chef's Compass: Interactive Recipe Finder (Navigate your ingredients, discover your next favorite recipe.)
 
-This repository contains a clean starter template for building a multi-page Streamlit web application.  
-It is designed for teaching, student projects, and anyone who needs a clear, minimal structure to start from.
+Chef's Compass is a Streamlit-based application designed to help Home Cooks and Meal Planners maximize the use of existing ingredients. It provides instant, ranked recipe suggestions based on what you have in your kitchen, minimizing guesswork and maximizing existing ingredients.
 
-The template includes:
+✨ Key Features
+Intelligent Ingredient Matching: Find recipes that match your selected ingredients above a customizable Ingredient Match Threshold (0-100%).
+
+Recipe Complexity Ranking: Recipes are sorted from Simple to Complex for ease of use.
+
+Data-Driven Insights: Tracks key performance indicators like Ingredient Match Score and Average Recipe Complexity.
+
+Robust Data Preparation: Uses cleaned and clustered ingredients (e.g., 'scallion' clustered as 'onion') for simple, effective matching.
+
+Favorites Management: Easily save and manage your preferred recipes on the dedicated Favorites page.
+
+Detailed Overview: A separate page provides a summary of the massive recipe dataset (around 25,000 recipes).
+
+💡 User Notes & Disclaimer
+Volume Warning: If you enter a broad list of common ingredients, you might receive a large number of results, sometimes over 1,000.
+
+Detailed View: To see the full recipe after selecting it in the breakdown table, you currently need to scroll down a little on the main page.
+
+Future Enhancement: An improvement is planned so that clicking the Recipe Title will automatically take you to the detailed view.
+
+The project includes:
 
 - A Home page (`app.py`)
 - A multi-page setup (`pages/` folder)
-- An example dataset (`data/example_data.csv`)
+- A dataset (`data/example_data.csv`)
 - A simple theme configuration (`.streamlit/config.toml`)
 - A complete environment setup guide (steps below)
 - A `requirements.txt` file for reproducible installs
@@ -124,14 +143,13 @@ Use the sidebar navigation to switch between:
 streamlit-app-template/
 ├─ app.py
 ├─ pages/
-│  ├─ 01_Overview.py
-│  ├─ 02_Data_Explorer.py
-│  └─ 03_About.py
+│  ├─ 01_Dataset Overview.py
+│  └─ 02_About us.py
 ├─ requirements.txt
 ├─ .gitignore
 ├─ README.md
 ├─ data/
-│  └─ example.csv
+│  └─ deduplicated_recipes_with_complexity.csv
 └─ .streamlit/
    └─ config.toml
 ```
@@ -142,7 +160,7 @@ streamlit-app-template/
 |------|-------------|
 | `app.py` | Main entry point for the app (Home page) |
 | `pages/` | Additional pages; Streamlit automatically detects them |
-| `data/` | Contains example datasets |
+| `data/` | Contains datasets |
 | `.streamlit/config.toml` | Optional theme and server configuration |
 | `requirements.txt` | List of Python dependencies |
 | `.gitignore` | Specifies which files Git should ignore |
