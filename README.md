@@ -31,9 +31,7 @@ The project includes:
 - A complete environment setup guide (steps below)
 - A `requirements.txt` file for reproducible installs
 
-STREAMLIT_DASHBOARD_URL = "https://github.com/BigData-SRH/Shreeraj-Recipe-app-template"
-
-Click here to see the Streamlit Dashboard for this project: [Streamlit Dashboard]({GITHUB_REPO_URL})
+Click here to see the Streamlit Dashboard for this project: [Streamlit Dashboard]({https://shreeraj-recipe-app.streamlit.app/})
 
 ---
 
